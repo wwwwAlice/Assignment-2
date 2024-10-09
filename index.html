@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Combined Visualizations: Bushfires, Weather, and Injuries</title>
+  <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-lite@5"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
+</head>
+<body>
+
+  <h1>Combined Visualizations: Bushfires, Extreme Weather, and Injuries</h1>
+
+  <!-- Bushfire Cases vs Deaths and Injuries by Australian States -->
+  <h2>Bushfire Cases vs Deaths and Injuries by Australian States</h2>
+  <div id="bushfire_cases"></div>
+
+  <!-- Deaths and Injuries by State and Extreme Weather Conditions -->
+  <h2>Deaths and Injuries by State and Extreme Weather Conditions</h2>
+  <div id="extreme_weather"></div>
+
+  <!-- Bushfire Safer Place South Australia with 6 Key Cities -->
+  <h2>Bushfire Safer Place South Australia with 6 Key Cities</h2>
+  <div id="bushfire_safer_place"></div>
+
+  <!-- Extreme Weather-Related Injury Hospitalisations -->
+  <h2>Extreme Weather-Related Injury Hospitalisations (2012 - 2021)</h2>
+  <div id="weather_injuries"></div>
+
+  <!-- Bushfire Cases Visualization Script -->
+  <script type="text/javascript">
+    var bushfireCasesSpec = {
+      "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+      "width": 600,
+      "height": 400,
+      "title": {
+        "text": "Bushfire Cases vs Deaths and Injuries by Australian States",
+        "fontSize": 20
+      },
+      "data": {
+        "values": [
+          {"state": "VIC", "bushfire_cases": 1583, "deaths_injuries": 39},
+          {"state": "NSW", "bushfire_cases": 5682, "deaths_injuries": 91},
+          {"state": "SA", "bushfire_cases": 313, "deaths_injuries": 40},
+          {"state": "WA", "bushfire_cases": 2044, "deaths_injuries": 42},
+          {"state": "NT", "bushfire_cases": 14, "deaths_injuries": 14},
+          {"state": "ACT", "bushfire_cases": 90, "deaths_injuries": 3},
+          {"state": "TAS", "bushfire_cases": 45, "deaths_injuries": 7},
+          {"state": "QLD", "bushfire_cases": 574, "deaths_injuries": 42}
+        ]
+      },
+      "params": [
+        {
+          "name": "bushfire_cases_slider",
+          "value": 10000,
+          "bind": {
+            "input": "range",
+            "min": 200,
+            "max": 10000,
+            "step": 100,
+            "name": "Filter by Bushfire Area ('000 hectares)"
+          }
+        },
+        {
+          "name": "deaths_injuries_slider",
+          "value": 100,
+          "bind": {
+            "input": "range",
+            "min": 0,
+            "max": 100,
+            "step": 1,
+            "name": "Filter by Deaths and Injuries"
+          }
+        }
+      ],
+      "transform": [
+        {
+          "filter": "datum.bushfire_cases <= bushfire_cases_slider && datum.deaths_injuries <= deaths_injuries_slider"
+        }
+      ],
+      "mark": "circle",
+      "encoding": {
+        "x": {
+          "field": "deaths_injuries",
+          "type": "quantitative",
+          "title": "Deaths and Injuries"
+        },
+        "y": {
+          "field": "bushfire_cases",
+          "type": "quantitative",
+          "title": "Bushfire Area ('000 hectares)"
+        },
+        "size": {
+          "field": "bushfire_cases",
+          "type": "quantitative",
+          "title": "Bubble Size (Bushfire Cases)"
+        },
+        "color": {
+          "field": "state",
+          "type": "nominal",
+          "title": "State"
+        },
+        "tooltip": [
+          {"field": "state", "type": "nominal", "title": "State"},
+          {"field": "bushfire_cases", "type": "quantitative", "title": "Bushfire Cases"},
+          {"field": "deaths_injuries", "type": "quantitative", "title": "Deaths and Injuries"}
+        ]
+      }
+    };
+
+    vegaEmbed('#bushfire_cases', bushfireCasesSpec).then(function(result) {
+      console.log(result);
+    }).catch(console.error);
+  </script>
+
+  <!-- Extreme Weather Visualization Script (with filters and all states) -->
+  <script type="text/javascript">
+    var extremeWeatherSpec = {
+      "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+      "width": 600,
+      "height": 400,
+      "title": {
+        "text": "Deaths and Injuries by State and Extreme Weather Conditions",
+        "fontSize": 20
+      },
+      "data": {
+        "values": [
+          {"state": "VIC", "weather": "Heat", "deaths_injuries": 410},
+          {"state": "VIC", "weather": "Cold", "deaths_injuries": 51},
+          {"state": "VIC", "weather": "Bushfire", "deaths_injuries": 39},
+          {"state": "VIC", "weather": "Rain", "deaths_injuries": 8},
+          {"state": "VIC", "weather": "Storm", "deaths_injuries": 10},
+          {"state": "NSW", "weather": "Heat", "deaths_injuries": 348},
+          {"state": "NSW", "weather": "Cold", "deaths_injuries": 40},
+          {"state": "NSW", "weather": "Bushfire", "deaths_injuries": 91},
+          {"state": "NSW", "weather": "Rain", "deaths_injuries": 52},
+          {"state": "NSW", "weather": "Storm", "deaths_injuries": 49},
+          {"state": "SA", "weather": "Heat", "deaths_injuries": 266},
+          {"state": "SA", "weather": "Cold", "deaths_injuries": 23},
+          {"state": "SA", "weather": "Bushfire", "deaths_injuries": 40},
+          {"state": "SA", "weather": "Rain", "deaths_injuries": 4},
+          {"state": "SA", "weather": "Storm", "deaths_injuries": 10},
+          {"state": "WA", "weather": "Heat", "deaths_injuries": 267},
+          {"state": "WA", "weather": "Cold", "deaths_injuries": 21},
+          {"state": "WA", "weather": "Bushfire", "deaths_injuries": 42},
+          {"state": "WA", "weather": "Rain", "deaths_injuries": 8},
+          {"state": "WA", "weather": "Storm", "deaths_injuries": 16},
+          {"state": "NT", "weather": "Heat", "deaths_injuries": 73},
+          {"state": "NT", "weather": "Cold", "deaths_injuries": 5},
+          {"state": "NT", "weather": "Bushfire", "deaths_injuries": 14},
+          {"state": "NT", "weather": "Rain", "deaths_injuries": 3},
+          {"state": "NT", "weather": "Storm", "deaths_injuries": 8},
+          {"state": "ACT", "weather": "Heat", "deaths_injuries": 23},
+          {"state": "ACT", "weather": "Cold", "deaths_injuries": 14},
+          {"state": "ACT", "weather": "Bushfire", "deaths_injuries": 3},
+          {"state": "ACT", "weather": "Rain", "deaths_injuries": 1},
+          {"state": "ACT", "weather": "Storm", "deaths_injuries": 0},
+          {"state": "TAS", "weather": "Heat", "deaths_injuries": 19},
+          {"state": "TAS", "weather": "Cold", "deaths_injuries": 22},
+          {"state": "TAS", "weather": "Bushfire", "deaths_injuries": 7},
+          {"state": "TAS", "weather": "Rain", "deaths_injuries": 3},
+          {"state": "TAS", "weather": "Storm", "deaths_injuries": 1},
+          {"state": "QLD", "weather": "Heat", "deaths_injuries": 717},
+          {"state": "QLD", "weather": "Cold", "deaths_injuries": 25},
+          {"state": "QLD", "weather": "Bushfire", "deaths_injuries": 60},
+          {"state": "QLD", "weather": "Rain", "deaths_injuries": 28},
+          {"state": "QLD", "weather": "Storm", "deaths_injuries": 16}
+        ]
+      },
+      "params": [
+        {
+          "name": "state_filter",
+          "value": "All",
+          "bind": {
+            "input": "select",
+            "options": ["All", "VIC", "NSW", "SA", "WA", "NT", "ACT", "TAS", "QLD"],
+            "name": "Filter by State"
+          }
+        },
+        {
+          "name": "weather_filter",
+          "value": "All",
+          "bind": {
+            "input": "select",
+            "options": ["All", "Heat", "Cold", "Bushfire", "Rain", "Storm"],
+            "name": "Filter by Weather Condition"
+          }
+        }
+      ],
+      "transform": [
+        {
+          "filter": "(state_filter === 'All' || datum.state === state_filter) && (weather_filter === 'All' || datum.weather === weather_filter)"
+        }
+      ],
+      "mark": "bar",
+      "encoding": {
+        "x": {
+          "field": "state",
+          "type": "nominal",
+          "title": "State"
+        },
+        "y": {
+          "field": "deaths_injuries",
+          "type": "quantitative",
+          "title": "Deaths and Injuries"
+        },
+        "color": {
+          "field": "weather",
+          "type": "nominal",
+          "title": "Weather Condition",
+          "scale": {
+            "scheme": "category20b"
+          }
+        },
+        "tooltip": [
+          {"field": "state", "type": "nominal", "title": "State"},
+          {"field": "weather", "type": "nominal", "title": "Weather Condition"},
+          {"field": "deaths_injuries", "type": "quantitative", "title": "Deaths and Injuries"}
+        ]
+      }
+    };
+
+    vegaEmbed('#extreme_weather', extremeWeatherSpec).then(function(result) {
+      console.log(result);
+    }).catch(console.error);
+  </script>
+
+  <!-- Bushfire Safer Place Visualization Script -->
+  <script type="text/javascript">
+    var bushfireSaferPlaceSpec = {
+      "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+      "width": 800,
+      "height": 450,
+      "title": {
+        "fontSize": 20,
+        "text": "Bushfire Safer Place South Australia with 6 Key Cities"
+      },
+      "layer": [
+        {
+          "data": {
+            "url": "https://raw.githubusercontent.com/wwwwAlice/FIT3179week9/refs/heads/main/SAMAP.json", 
+            "format": {"type": "topojson", "feature": "australian-states"}
+          },
+          "mark": {
+            "type": "geoshape",
+            "fill": "#e0e0e0",
+            "stroke": "gray",
+            "strokeWidth": 1
+          },
+          "encoding": {
+            "tooltip": [
+              {"value": "South Australia", "type": "nominal", "title": "State Name"}
+            ]
+          }
+        },
+        {
+          "data": {
+            "url": "https://raw.githubusercontent.com/wwwwAlice/FIT3179week9/refs/heads/main/BushfireSaferPlaces_GDA.json", 
+            "format": {"type": "topojson", "feature": "BushfireSaferPlaces_GDA2020"}
+          },
+          "mark": {
+            "type": "geoshape",
+            "fill": "#e0e0e0",
+            "stroke": "red",
+            "strokeWidth": 1
+          },
+          "encoding": {
+            "tooltip": [
+              {"value": "South Australia", "type": "nominal", "title": "State Name"}
+            ]
+          }
+        }
+      ]
+    };
+
+    vegaEmbed('#bushfire_safer_place', bushfireSaferPlaceSpec).then(function(result) {
+      console.log(result);
+    }).catch(console.error);
+  </script>
+
+  <!-- Extreme Weather-Related Injury Hospitalisations Script -->
+  <script type="text/javascript">
+    var weatherInjuriesSpec = {
+      "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+      "width": 700,
+      "height": 400,
+      "title": {
+        "text": "Extreme Weather-Related Injury Hospitalisations (2012 - 2021)",
+        "fontSize": 20
+      },
+      "data": {
+        "values": [
+          {"year": "2012-13", "heat": 530, "cold": 87, "bushfire": 91, "rain": 25, "storm": 15},
+          {"year": "2013-14", "heat": 807, "cold": 91, "bushfire": 99, "rain": 20, "storm": 10},
+          {"year": "2014-15", "heat": 566, "cold": 82, "bushfire": 104, "rain": 35, "storm": 20},
+          {"year": "2015-16", "heat": 669, "cold": 66, "bushfire": 89, "rain": 18, "storm": 11},
+          {"year": "2016-17", "heat": 840, "cold": 104, "bushfire": 66, "rain": 15, "storm": 8},
+          {"year": "2017-18", "heat": 710, "cold": 84, "bushfire": 79, "rain": 20, "storm": 13},
+          {"year": "2018-19", "heat": 832, "cold": 64, "bushfire": 73, "rain": 21, "storm": 15},
+          {"year": "2019-20", "heat": 830, "cold": 73, "bushfire": 174, "rain": 16, "storm": 15},
+          {"year": "2020-21", "heat": 741, "cold": 65, "bushfire": 57, "rain": 12, "storm": 9},
+          {"year": "2021-22", "heat": 579, "cold": 57, "bushfire": 58, "rain": 40, "storm": 20}
+        ]
+      },
+      "transform": [
+        {
+          "fold": ["heat", "cold", "bushfire", "rain", "storm"],
+          "as": ["weather_condition", "hospitalisations"]
+        }
+      ],
+      "mark": "line",
+      "encoding": {
+        "x": {
+          "field": "year",
+          "type": "ordinal",
+          "title": "Year"
+        },
+        "y": {
+          "field": "hospitalisations",
+          "type": "quantitative",
+          "title": "Injury Hospitalisations"
+        },
+        "color": {
+          "field": "weather_condition",
+          "type": "nominal",
+          "title": "Weather Condition",
+          "legend": {"title": "Weather Condition"}
+        },
+        "tooltip": [
+          {"field": "year", "type": "ordinal", "title": "Year"},
+          {"field": "hospitalisations", "type": "quantitative", "title": "Injury Hospitalisations"},
+          {"field": "weather_condition", "type": "nominal", "title": "Weather Condition"}
+        ]
+      }
+    };
+
+    vegaEmbed('#weather_injuries', weatherInjuriesSpec).then(function(result) {
+      console.log(result);
+    }).catch(console.error);
+  </script>
+
+</body>
+</html>
